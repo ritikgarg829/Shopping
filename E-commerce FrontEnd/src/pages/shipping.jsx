@@ -1,29 +1,31 @@
-import React, { useState } from 'react'
-import { BiArrowBack } from "react-icons/bi"
-import "../Styles/shipping.css"
-import { useNavigate } from 'react-router-dom'
+import React, { useState, useEffect } from 'react';
+import { BiArrowBack } from "react-icons/bi";
+import "../Styles/shipping.css";
+import { useNavigate } from 'react-router-dom';
+import { useSelector } from "react-redux";
 
 const shipping = () => {
-
-
     const navigate = useNavigate();
-    const [ShippingInfo, setShippingInfo] = useState({
 
+    const { cartItems } = useSelector((state) => state.cartReducer);
+
+    const [ShippingInfo, setShippingInfo] = useState({
         address: "",
         state: "",
         city: "",
         countary: "",
         pincode: ""
-
-    })
-
-
-
+    });
 
     const changeHandler = (e) => {
         setShippingInfo((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    };
 
-    }
+    useEffect(() => {
+        if (cartItems.length <= 0) {
+            navigate('/cart');
+        }
+    }, [cartItems]);
 
     return (
         <div className="shipping">
@@ -56,6 +58,6 @@ const shipping = () => {
 
         </div>
     )
-}
+};
 
-export default shipping
+export default shipping;

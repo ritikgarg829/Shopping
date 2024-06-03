@@ -110,7 +110,6 @@ export const singleOrder = TryCatch(async (req, res) => {
             success: false,
             message: "no orders found"
 
-
         })
     }
 

@@ -1,60 +1,97 @@
-import { useState } from "react";
-import AdminSidebar from "../../../components/admin/adminSidebar";
-import { Link } from "react-router-dom";
-import "../../../Styles/admin/management/transectionManagement.css"
+import React, { useState, useEffect } from 'react';
+import AdminSidebar from '../../../components/admin/adminSidebar';
+import { Link, useParams, useNavigate } from 'react-router-dom';
+import '../../../Styles/admin/management/transectionManagement.css';
+import { useSelector } from "react-redux"
+import { server } from "../../../redux/store.js"
+import { toast } from "react-hot-toast"
+import { FaTrash } from "react-icons/fa"
 
-const img =
-    "https://images.unsplash.com/photo-1542291026-7eec264c27ff?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8c2hvZXN8ZW58MHx8MHx8&w=1000&q=804";
-
-const orderItems = [
-    {
-        name: "Puma Shoes",
-        photo: img,
-        _id: "asdsaasdas",
-        quantity: 4,
-        price: 2000,
-    },
-];
+import { useSingleOrderQuery, useDeleteOrderMutation, useUpdateOrderMutation } from '../../../redux/api/order-api.js';
 
 const TransactionManagement = () => {
-    const [order, setOrder] = useState({
-        name: "Ritik garg",
-        address: "77 Black Street",
-        city: "Neyword",
-        state: "Nevada",
-        country: "India",
-        pinCode: 2434341,
-        status: "Processing",
-        subtotal: 4000,
-        discount: 1200,
-        shippingCharges: 0,
-        tax: 200,
-        total: 4000 + 200 + 0 - 1200,
-        orderItems,
-        _id: "asdnasjdhbn",
-    });
+    const navigate = useNavigate();
+    const params = useParams();
+
+    const { user: users } = useSelector((state) => state.userReducer);
+    const { data, isError, error } = useSingleOrderQuery(params.id);
+    const [updateProducts] = useUpdateOrderMutation();
+    const [deleteProduct] = useDeleteOrderMutation();
+
+    if (!data) {
+        return <div>Loading...</div>;
+    }
+
+    console.log("data is ", data)
 
     const {
-        name,
-        address,
-        city,
-        country,
-        state,
-        pinCode,
-        subtotal,
-        shippingCharges,
-        tax,
-        discount,
-        total,
-        status,
-    } = order;
+        order: {
+            shippingInfo: { address, city, state, country, pincode },
+            _id,
+            user: { name },
+            subtotal,
+            tax,
+            shippingcharges,
+            discount,
+            total,
+            status,
+            orderItems,
+        },
+    } = data;
 
-    const updateHander = () => {
-        setOrder((prev) => ({
-            ...prev,
-            status: prev.status === "Processing" ? "Shipped" : "Delivered",
-        }));
+
+
+    const updateHander = async () => {
+        //example:  setOrder((prev) => ({
+        //     ...prev,
+        //     status: prev.status === "Processing" ? "Shipped" : "Delivered",
+        // }));
+
+        try {
+            const res = await updateProducts({ userid: users?._id, orderid: params.id }); // Ensure the correct parameter name is passed
+
+            if ("data" in res) {
+                toast.success("product updated successfully");
+
+            } else {
+                const error = res.error;
+                const message = (error.data).message;
+                toast.error(message)
+            }
+
+
+        } catch (error) {
+            // Handle error
+            console.error("Error updating product:", error);
+        }
+
+
     };
+
+
+    const deleteHandler = async () => {
+        try {
+            const res = await deleteProduct({ userid: users?._id, orderid: params.id }); // Ensure the correct parameter name is passed
+
+            if ("data" in res) {
+                toast.success("product deleted successfully");
+
+            } else {
+                const error = res.error;
+                const message = (error.data).message;
+                toast.error(message)
+            }
+
+
+        } catch (error) {
+            // Handle error
+            console.error("Error updating product:", error);
+        }
+
+        navigate('/admin/transection')
+
+
+    }
 
     return (
         <div className="admin-container">
@@ -67,8 +104,9 @@ const TransactionManagement = () => {
                 >
                     <h2 className="text-center">Order Items</h2>
 
-                    {order.orderItems.map((i) => (
+                    {orderItems.map((i) => (
                         <ProductCard
+                            key={i._id}
                             name={i.name}
                             photo={i.photo}
                             _id={i._id}
@@ -78,17 +116,21 @@ const TransactionManagement = () => {
                     ))}
                 </section>
 
+                <button className="product-delete-btn" onClick={deleteHandler}>
+                    <FaTrash />
+                </button>
+
                 <article className="shipping-info-card">
                     <h1 className="text-center">Order Info</h1>
                     <h5>User Info</h5>
                     <p>Name: {name}</p>
                     <p>
-                        Address: {`${address}, ${city}, ${state}, ${country} ${pinCode}`}
+                        Address: {`${address}, ${city}, ${state}, ${country} ${pincode}`}
                     </p>
 
                     <h5>Amount Info</h5>
                     <p>Subtotal: {subtotal}</p>
-                    <p>Shipping Charges: {shippingCharges}</p>
+                    <p>Shipping Charges: {shippingcharges}</p>
                     <p>Tax: {tax}</p>
                     <p>Discount: {discount}</p>
                     <p>Total: {total}</p>
@@ -118,7 +160,7 @@ const TransactionManagement = () => {
 
 const ProductCard = ({ name, photo, price, quantity, _id }) => (
     <div className="transaction-product-card">
-        <img src={photo} alt={name} />
+        <img src={`${server}/${photo}`} alt={name} />
         <Link to={`/product/${_id}`}>{name}</Link>
         <span>
             ${price} X {quantity} = ${price * quantity}
