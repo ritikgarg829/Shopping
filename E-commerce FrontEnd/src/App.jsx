@@ -28,6 +28,8 @@ const Transection = lazy(() => import("./pages/admin/transection"));
 const Stopwatch = lazy(() => import("./pages/admin/apps/stopwatch"));
 const Coupon = lazy(() => import("./pages/admin/apps/coupon"));
 const Toss = lazy(() => import("./pages/admin/apps/toss"));
+const Error404 = lazy(() => import("./components/error404"));
+const Checkout = lazy(() => import("./pages/checkout"));
 
 
 
@@ -69,6 +71,7 @@ const App = () => {
             <Route path="/shipping" element={<Shipping />} />
             <Route path="/orders" element={<Orders />} />
             <Route path="/ordersdetails/:id" element={<Ordersdetails />} />
+            <Route path="/pay" element={<Checkout />} />
           </Route>
 
           {/*---------------------Admin pannel routes-----------------------------------------------*/}
@@ -85,6 +88,11 @@ const App = () => {
             <Route path="/admin/coupon" element={<Coupon />} />
             <Route path="/admin/toss" element={<Toss />} />
           </Route>
+
+          // ---------------------------------------------------------------------------------
+          <Route path="*" element={<Error404 />} />
+
+
 
         </Routes>
         <Footer />

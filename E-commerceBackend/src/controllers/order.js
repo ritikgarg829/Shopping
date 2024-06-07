@@ -8,7 +8,7 @@ import { invalidatecache, reduceStock } from "../utils/feature.js";
 // creating new order-
 export const newOrder = TryCatch(async (req, res) => {
 
-    const { shippingInfo, orderItems, subtotal, tax, shippingcharges, discount, total } = req.body;
+    const { shippingInfo, orderItems, subtotal, tax, shippingCharges, discount, total } = req.body;
 
     const { user } = req.body;
 
@@ -23,7 +23,7 @@ export const newOrder = TryCatch(async (req, res) => {
 
 
     const order = await Order.create({
-        shippingInfo, orderItems, user, subtotal, tax, shippingcharges, discount, total
+        shippingInfo, orderItems, user, subtotal, tax, shippingCharges, discount, total
     });
 
 

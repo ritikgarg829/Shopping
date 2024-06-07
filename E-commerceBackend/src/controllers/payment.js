@@ -5,28 +5,49 @@ import { stripe } from "../app.js";
 // -----------------------create payment using Stripe---------------------------------------
 
 export const createPaymentIntent = TryCatch(async (req, res) => {
+    const { amount, description, customerDetails } = req.body;
 
-
-    const { amount } = req.body;
-
-    if (!amount)
+    if (!amount) {
         return res.status(401).json({
             success: false,
-            message: `Please enter amount`,
-        })
+            message: "Please enter amount",
+        });
+    }
+
+    if (!description || !customerDetails) {
+        return res.status(401).json({
+            success: false,
+            message: "Please provide description and customer details",
+        });
+    }
 
     const paymentIntent = await stripe.paymentIntents.create({
-
-        amount: Number(amount) * 100, currency: "inr"
-    })
+        amount: Number(amount) * 100,
+        currency: "inr",
+        description,
+        shipping: {
+            name: customerDetails.name,
+            address: {
+                line1: customerDetails.address.line1,
+                city: customerDetails.address.city,
+                state: customerDetails.address.state,
+                postal_code: customerDetails.address.postal_code,
+                country: customerDetails.address.country,
+            },
+        },
+        metadata: {
+            order_id: `order_${Date.now()}`, // Example metadata
+            customer_name: customerDetails.name,
+            customer_email: customerDetails.email
+        }
+    });
 
     return res.status(201).json({
         success: true,
         clientSecret: paymentIntent.client_secret
-    })
+    });
+});
 
-
-})
 
 
 

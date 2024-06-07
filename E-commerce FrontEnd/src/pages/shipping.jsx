@@ -2,62 +2,102 @@ import React, { useState, useEffect } from 'react';
 import { BiArrowBack } from "react-icons/bi";
 import "../Styles/shipping.css";
 import { useNavigate } from 'react-router-dom';
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import axios from 'axios';
+import { server } from "../redux/store.js";
+import { saveShippingInfo } from "../redux/reducer/cartReducer.js";
+import { toast } from "react-hot-toast";
 
-const shipping = () => {
+const Shipping = () => {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
-    const { cartItems } = useSelector((state) => state.cartReducer);
+    const { cartItems, total } = useSelector((state) => state.cartReducer);
+    const { user } = useSelector((state) => state.userReducer);
 
-    const [ShippingInfo, setShippingInfo] = useState({
+    const [shippingInfo, setShippingInfo] = useState({
         address: "",
         state: "",
         city: "",
-        countary: "",
+        country: "",
         pincode: ""
     });
+
+    const submitHandler = async (e) => {
+        e.preventDefault();
+
+        dispatch(saveShippingInfo(shippingInfo));
+
+        try {
+            const { data } = await axios.post(`${server}/api/v1/payment/create`, {
+                amount: total,
+                description: "Order payment for e-commerce site",
+                customerDetails: {
+                    name: user.name,
+                    address: {
+                        line1: shippingInfo.address,
+                        city: shippingInfo.city,
+                        state: shippingInfo.state,
+                        postal_code: shippingInfo.pincode,
+                        country: shippingInfo.country,
+                    }
+                }
+            }, {
+                headers: {
+                    "Content-Type": "application/json"
+                },
+            });
+
+            navigate("/pay", {
+                state: data.clientSecret
+            });
+
+        } catch (error) {
+            console.error("Error:", error);
+            toast.error("Something Went Wrong");
+        }
+    };
 
     const changeHandler = (e) => {
         setShippingInfo((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     };
 
     useEffect(() => {
-        if (cartItems.length <= 0) {
+        if (cartItems.length === 0) {
             navigate('/cart');
         }
-    }, [cartItems]);
+    }, [cartItems, navigate]);
 
     return (
         <div className="shipping">
-            <button className="back-btn" onClick={() => { navigate("/cart"); }}><BiArrowBack /></button>
-            <form>
+            <button className="back-btn" onClick={() => navigate("/cart")}><BiArrowBack /></button>
+            <form onSubmit={submitHandler}>
                 <h1>Shipping Address</h1>
                 <input type="text" placeholder='Address' name="address" required
-                    value={ShippingInfo.address}
+                    value={shippingInfo.address}
                     onChange={changeHandler} />
 
                 <input type="text" placeholder='State' name="state" required
-                    value={ShippingInfo.state}
+                    value={shippingInfo.state}
                     onChange={changeHandler} />
 
                 <input type="text" placeholder='City' name="city" required
-                    value={ShippingInfo.city}
+                    value={shippingInfo.city}
                     onChange={changeHandler} />
 
-                <select name="countary" required value={ShippingInfo.countary}
+                <select name="country" required value={shippingInfo.country}
                     onChange={changeHandler}>
-                    <option value="" >Select Countary</option>
-                    <option value="India" >India</option>
+                    <option value="">Select Country</option>
+                    <option value="India">India</option>
                 </select>
 
                 <input type="text" placeholder='Pincode' name="pincode" required
-                    value={ShippingInfo.pincode}
+                    value={shippingInfo.pincode}
                     onChange={changeHandler} />
-                <button className="paynow">Pay Now</button>
+                <button className="paynow" type="submit">Pay Now</button>
             </form>
-
         </div>
-    )
+    );
 };
 
-export default shipping;
+export default Shipping;
