@@ -1,9 +1,8 @@
-import React from 'react'
-import { Link } from "react-router-dom"
-import "../../Styles/admin/table.css"
+import React from 'react';
+import { Link } from "react-router-dom";
+import "../../Styles/admin/table.css";
 
-
-const table = ({ orders }) => {
+const Table = ({ orders = [] }) => {  // Default to an empty array if orders is undefined
 
     return (
         <div>
@@ -18,23 +17,25 @@ const table = ({ orders }) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {orders.map(order => (
-                        <tr key={order.id}>
-                            <td>{order.id}</td>
-                            <td>₹{order.amount}</td>
-                            <td>{order.quantity}</td>
-                            <td>₹{order.discount}</td>
-                            <td>{order.status}</td>
+                    {orders.length > 0 ? (
+                        orders.map(order => (
+                            <tr key={order._id}>
+                                <td>{order._id}</td>
+                                <td>₹{order.amount || 'N/A'}</td>
+                                <td>{order.quantity || 'N/A'}</td>
+                                <td>₹{order.discount || 'N/A'}</td>
+                                <td>{order.status || 'N/A'}</td>
+                            </tr>
+                        ))
+                    ) : (
+                        <tr>
+                            <td colSpan="5">No orders available</td>
                         </tr>
-                    ))}
+                    )}
                 </tbody>
             </table>
         </div>
-
     );
 }
 
-
-
-
-export default table
+export default Table;

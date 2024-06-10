@@ -4,6 +4,7 @@ import axios from "axios";
 export const userAPI = createApi({
     reducerPath: "userApi",
     baseQuery: fetchBaseQuery({ baseUrl: `${import.meta.env.VITE_SERVER}/api/v1/user/` }),
+    tagTypes: ["users"],
     endpoints: (builder) => ({
         login: builder.mutation({
             query: (user) => ({
@@ -11,12 +12,27 @@ export const userAPI = createApi({
                 method: "POST",
                 body: user,
 
-            })
+            }),
+            invalidatesTags: ["users"]
         }),
 
+        deleteUser: builder.mutation({
+            query: ({ userid, adminUserId }) => ({
+                url: `${userid}?id=${adminUserId}`,
+                method: "DELETE",
+            }),
+            invalidatesTags: ["users"]
+        }),
 
+        allUsers: builder.query({
+            query: (id) => ({
+                url: `all?id=${id}`,
+                method: "GET",
+            }),
 
+            invalidatesTags: ["users"]
 
+        })
 
     })
 })
@@ -30,4 +46,4 @@ export const getUser = async (id) => {
     }
 }
 
-export const { useLoginMutation } = userAPI;
+export const { useLoginMutation, useAllUsersQuery, useDeleteUserMutation } = userAPI;

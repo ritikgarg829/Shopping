@@ -13,7 +13,7 @@ const home = () => {
 
     const { data, isLoading, isError } = useLastestProductsQuery()
 
-    if (isError) Toast.error("can not fetch latest order");
+    if (isError) toast.error("can not fetch latest order");
 
     const AddtoCartHandler = (cartItems) => {
         if (cartItems.stock < 1) return toast.error("out of stock");

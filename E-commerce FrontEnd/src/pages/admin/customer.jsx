@@ -1,17 +1,41 @@
-import React, { useState } from 'react'
-import AdminSidebar from '../../components/admin/adminSidebar'
-import data from "../../assets/data.json"
-import { Link } from "react-router-dom"
-import "../../Styles/admin/customer.css"
-
+import React, { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import AdminSidebar from '../../components/admin/adminSidebar';
+import { toast } from "react-hot-toast";
+import "../../Styles/admin/customer.css";
 import { MdDelete } from "react-icons/md";
+import { useAllUsersQuery, useDeleteUserMutation } from "../../redux/api/user-api.js";
+import avatar from "../../assets/images/avatar.png";
 
-const customer = () => {
-    const [customerData] = useState(data.customer);
+const Customer = () => {
+    const { user } = useSelector((state) => state.userReducer);
+    const { data, isLoading, isError } = useAllUsersQuery(user?._id);
+    const [deleteUsers] = useDeleteUserMutation(user?._id);
+    const [customerData, setCustomerData] = useState([]);
 
-    const onhandleDelete = () => {
-
+    if (isError) {
+        toast.error(isError.data.message);
     }
+
+    useEffect(() => {
+        if (data) {
+            setCustomerData(data.users);
+        }
+    }, [data]);
+
+
+    const onHandleDelete = async (userId) => {
+        const res = await deleteUsers({ userid: userId, adminUserId: user?._id });
+
+        if ("data" in res) {
+            toast.success("Customer deleted successfully");
+            setCustomerData(prev => prev.filter(customer => customer._id !== userId));
+        } else {
+            const error = res.error;
+            const message = error.data.message;
+            toast.error(message);
+        }
+    };
 
     return (
         <div className="adminContainer">
@@ -19,7 +43,7 @@ const customer = () => {
             <main>
                 <div className="container">
                     <div className="order-view">
-                        <h1 className="text-center">All - customers</h1>
+                        <h1 className="text-center">All - Customers</h1>
                         <div className="main">
                             <table>
                                 <thead>
@@ -34,14 +58,14 @@ const customer = () => {
                                 </thead>
                                 <tbody>
                                     {customerData && customerData.map(customer => (
-                                        <tr key={customer.id}>
-                                            <td>{customer.img}</td>
+                                        <tr key={customer._id}>
+                                            <td><img src={avatar} alt={customer.name} style={{ width: '50px', height: '50px', objectFit: 'cover', borderRadius: "50%" }} /></td>
                                             <td>{customer.name}</td>
                                             <td>{customer.gender}</td>
                                             <td>{customer.email}</td>
                                             <td>{customer.role}</td>
                                             <td>
-                                                <button className="view" onClick={onhandleDelete}><MdDelete /></button>
+                                                <button className="view" onClick={() => onHandleDelete(customer._id)}><MdDelete /></button>
                                             </td>
                                         </tr>
                                     ))}
@@ -52,7 +76,7 @@ const customer = () => {
                 </div>
             </main>
         </div>
-    )
-}
+    );
+};
 
-export default customer
+export default Customer;

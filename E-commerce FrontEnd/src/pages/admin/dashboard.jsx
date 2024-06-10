@@ -1,19 +1,46 @@
-import React from 'react'
-import AdminSidebar from '../../components/admin/adminSidebar'
-import Table from "../../components/admin/table"
+import React, { useEffect, useState } from 'react';
+import AdminSidebar from '../../components/admin/adminSidebar';
+import Table from "../../components/admin/table";
 import { BsSearch } from 'react-icons/bs';
 import { FaRegBell } from 'react-icons/fa6';
 import { BiMaleFemale } from 'react-icons/bi';
 import { HiTrendingUp, HiTrendingDown } from 'react-icons/hi';
-import data from "../../assets/data.json"
-import { Barchart, GenderChart } from "../../components/admin/chart"
+import { Barchart, GenderChart } from "../../components/admin/chart";
 import "../../Styles/admin/dashboard.css";
+import { useStateQuery } from "../../redux/api/dashboard-api";
+import { useSelector } from 'react-redux';
+import { toast } from "react-hot-toast";
+import { getLastMonths } from "../../utils/features.js"
 
-const dashboard = () => {
 
-    const amount = true;
-    const percentage = 52
-    const value = 12121212
+const { last6Months: months } = getLastMonths();
+
+const Dashboard = () => {
+    const { user } = useSelector((state) => state.userReducer);
+    const { data, isLoading, isError } = useStateQuery(user?._id);
+
+    const [stats, setStats] = useState({});
+
+    useEffect(() => {
+        if (data) {
+            setStats(data.stats);
+        }
+    }, [data]);
+
+    useEffect(() => {
+        if (isError) {
+            toast.error(isError.data.message);
+        }
+    }, [isError]);
+
+    const getWidgetCircleStyle = (percentage, color) => {
+        return {
+            background: percentage > 9999 ? 'white' : `conic-gradient(
+                ${color} ${Math.abs(percentage) / 100 * 360}deg, rgba(255,255,255,0) 0
+            )`
+        };
+    };
+
     return (
         <div className="adminContainer">
             <AdminSidebar />
@@ -28,124 +55,128 @@ const dashboard = () => {
                         alt="" />
                 </div>
 
-
                 <section className="widgetContainer">
-
                     <article className="widget">
                         <div className="widget-info">
                             <p>Revenue</p>
-                            <h4>{true ? `$${340000}` : 340000}</h4>
-                            {40 > 0 ? (<span className="text-green-500"><HiTrendingUp /> +{40} %</span>) :
-                                (<span className="text-red-500"><HiTrendingDown /> -{40} %</span>)}
+                            <h4>${stats.counts?.Revenue ?? 0}</h4>
+                            {stats.changePercentage?.revenue > 0 ? (
+                                <span className="text-green-500"><HiTrendingUp /> +{stats.changePercentage?.revenue}%</span>
+                            ) : (
+                                <span className="text-red-500"><HiTrendingDown /> {stats.changePercentage?.revenue}%</span>
+                            )}
                         </div>
                         <div className="widgetCircle"
-                            style={{
-                                background: `conic-gradient(
-                                blue ${Math.abs(40) / 100 * 360}deg , rgba(255,255,255)0
-                            )` }}>
-                            {40 > 0 ? (<span className="text-green-500">{40}%</span>) : (<span className="text-green-500">-{40}%</span>)}
+                            style={getWidgetCircleStyle(stats.changePercentage?.revenue, 'blue')}>
+                            {stats.changePercentage?.revenue > 0 ? (
+                                <span className="text-green-500">{stats.changePercentage?.revenue}%</span>
+                            ) : (
+                                <span className="text-red-500">{stats.changePercentage?.revenue}%</span>
+                            )}
                         </div>
                     </article>
-
 
                     <article className="widget">
                         <div className="widget-info">
                             <p>Users</p>
-                            <h4>{false ? `$${400}` : 400}</h4>
-                            {-14 > 0 ? (<span className="text-green-500"><HiTrendingUp /> +{14} %</span>) :
-                                (<span className="text-red-500"><HiTrendingDown /> -{14} %</span>)}
+                            <h4>{stats.counts?.user ?? 0}</h4>
+                            {stats.changePercentage?.user > 0 ? (
+                                <span className="text-green-500"><HiTrendingUp /> +{stats.changePercentage?.user}%</span>
+                            ) : (
+                                <span className="text-red-500"><HiTrendingDown /> {stats.changePercentage?.user}%</span>
+                            )}
                         </div>
                         <div className="widgetCircle"
-                            style={{
-                                background: `conic-gradient(
-                                yellow ${Math.abs(14) / 100 * 360}deg , rgba(255,255,255)0
-                            )` }}>
-                            {-14 > 0 ? (<span className="text-green-500">{14}%</span>) : (<span className="text-green-500">-{14}%</span>)}
+                            style={getWidgetCircleStyle(stats.changePercentage?.user, 'yellow')}>
+                            {stats.changePercentage?.user > 0 ? (
+                                <span className="text-green-500">{stats.changePercentage?.user}%</span>
+                            ) : (
+                                <span className="text-red-500">{stats.changePercentage?.user}%</span>
+                            )}
                         </div>
                     </article>
 
                     <article className="widget">
                         <div className="widget-info">
-                            <p>Transections</p>
-                            <h4>{false ? `$${23000}` : 23000}</h4>
-                            {80 > 0 ? (<span className="text-green-500"><HiTrendingUp /> +{80} %</span>) :
-                                (<span className="text-red-500"><HiTrendingDown /> -{80}%</span>)}
+                            <p>Transactions</p>
+                            <h4>{stats.counts?.order ?? 0}</h4>
+                            {stats.changePercentage?.order > 0 ? (
+                                <span className="text-green-500"><HiTrendingUp /> +{stats.changePercentage?.order}%</span>
+                            ) : (
+                                <span className="text-red-500"><HiTrendingDown /> {stats.changePercentage?.order}%</span>
+                            )}
                         </div>
-
                         <div className="widgetCircle"
-                            style={{
-                                background: `conic-gradient(
-                                purple ${Math.abs(80) / 100 * 360}deg , rgba(255,255,255)0
-                            )` }}>
-
-                            {80 > 0 ? (<span className="text-green-500">{80}%</span>) : (<span className="text-green-500">-{80}%</span>)}
+                            style={getWidgetCircleStyle(stats.changePercentage?.order, 'purple')}>
+                            {stats.changePercentage?.order > 0 ? (
+                                <span className="text-green-500">{stats.changePercentage?.order}%</span>
+                            ) : (
+                                <span className="text-red-500">{stats.changePercentage?.order}%</span>
+                            )}
                         </div>
                     </article>
-
-
 
                     <article className="widget">
                         <div className="widget-info">
                             <p>Products</p>
-                            <h4>{false ? `$${1000}` : 1000}</h4>
-                            {30 > 0 ? (<span className="text-green-500"><HiTrendingUp /> +{30} %</span>) :
-                                (<span className="text-red-500"><HiTrendingDown /> -{30}%</span>)}
+                            <h4>{stats.counts?.product ?? 0}</h4>
+                            {stats.changePercentage?.product > 0 ? (
+                                <span className="text-green-500"><HiTrendingUp /> +{stats.changePercentage?.product}%</span>
+                            ) : (
+                                <span className="text-red-500"><HiTrendingDown /> {stats.changePercentage?.product}%</span>
+                            )}
                         </div>
                         <div className="widgetCircle"
-                            style={{
-                                background: `conic-gradient(
-                        aqua ${Math.abs(30) / 100 * 360}deg , rgba(255,255,255)0
-                    )` }}>
-                            {30 > 0 ? (<span className="text-green-500">{30}%</span>) : (<span className="text-green-500">-{30}%</span>)}
+                            style={getWidgetCircleStyle(stats.changePercentage?.product, 'aqua')}>
+                            {stats.changePercentage?.product > 0 ? (
+                                <span className="text-green-500">{stats.changePercentage?.product}%</span>
+                            ) : (
+                                <span className="text-red-500">{stats.changePercentage?.product}%</span>
+                            )}
                         </div>
                     </article>
                 </section>
-                {/*  -------------------------------------------------------------------------------------graphn content */}
-
 
                 <section className="graphContainer">
                     <div className="revenue-chart">
-
-                        <h2 className="chart-heading">Revenue & Transection</h2>
-                        {/*  graphn content */}
-
+                        <h2 className="chart-heading">Revenue & Transaction</h2>
                         <Barchart
-                            data_1={[200, 444, 343, 556, 778, 455, 990]}
-                            data_2={[300, 144, 433, 655, 237, 755, 190]}
+                            data_1={stats.chart?.orderMonthRevenue ?? []}
+                            data_2={stats.chart?.orderMonthCounts ?? []}
                             title_1="Revenue"
                             title_2="Transaction"
                             bgColor_1="rgb(0,115,255)"
                             bgColor_2="rgba(53,162,235,0.8)"
-                            label={['January', 'February', 'March', 'April', 'May', 'June', 'July']}
+                            label={months}
                         />
-
                     </div>
 
                     <div className="dashboard-categories">
                         <h2 className="inventory-heading">Inventory</h2>
                         <div className="category">
-                            {data.categories.map((i) => (
-                                <div className="category-item" key={i.heading}>
-                                    <h5>{i.heading}</h5>
-                                    <div className="categorystyle1">
-                                        <div className="categorystyle2" style={{ backgroundColor: `hsl(${i.value * 4},${i.value}%,50%)`, width: `${i.value}%` }}>
+                            {stats.categoryCount && stats.categoryCount.map((i, index) => {
+                                const [heading, value] = Object.entries(i)[0];
+                                return (
+                                    <div className="category-item" key={index}>
+                                        <h5>{heading}</h5>
+                                        <div className="categorystyle1">
+                                            <div className="categorystyle2" style={{ backgroundColor: `hsl(${value * 4},${value}%,50%)`, width: `${value}%` }}>
+                                            </div>
                                         </div>
+                                        <span className="category-span">{value}%</span>
                                     </div>
-                                    <span className="category-span">{70}%</span>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
                     </div>
                 </section>
-
-                {/*  -------------------------------------------------------------------------------------last section content */}
 
                 <section className="transectionContainer">
                     <div className="gender-chart">
                         <h2 className="gender-heading">Gender Ratio</h2>
                         <GenderChart
                             labels={["Female", "Male"]}
-                            data={[12, 19]}
+                            data={[stats.genderRatio?.female ?? 0, stats.genderRatio?.male ?? 0]}
                             backgroundColor={["hsl(340,82%,56%)", "rgba(53,162,235,0.8)"]}
                             cutout={90}
                         />
@@ -153,31 +184,13 @@ const dashboard = () => {
                     </div>
 
                     <div className="transection-chart">
-                        <h2 className="transection-heading">Transection</h2>
-                        <Table orders={data.transaction} />
-
+                        <h2 className="transection-heading">Transaction</h2>
+                        <Table orders={stats.modifiedLatestTransaction} />
                     </div>
-
-
-
-
-
                 </section>
-
-
-
-
-
-
-
-
-
-
-
             </main>
         </div>
-    )
+    );
 }
 
-
-export default dashboard
+export default Dashboard;

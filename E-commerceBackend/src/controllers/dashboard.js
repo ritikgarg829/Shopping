@@ -124,7 +124,7 @@ export const dashboardStats = TryCatch(async (req, res) => {
                 Order.find({}).select("total"),
                 lastSixMonthsOrders,
                 Product.distinct("category"),
-                User.countDocuments({ gender: "female" }),
+                User.countDocuments({ gender: { $in: ['Female', 'female'] } }),
                 latestTransaction
             ])
 
@@ -195,7 +195,7 @@ export const dashboardStats = TryCatch(async (req, res) => {
         const modifiedLatestTransaction = latestTransactionPromise.map(i => ({
             _id: i._id,
             discount: i.discount,
-            amount: i.amount,
+            amount: i.total,
             status: i.status,
             quantity: i.orderItems.length
         }));
