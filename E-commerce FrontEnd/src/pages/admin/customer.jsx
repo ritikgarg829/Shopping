@@ -38,12 +38,12 @@ const Customer = () => {
     };
 
     return (
-        <div className="adminContainer">
+        <div className="adminContainer-customer">
             <AdminSidebar />
             <main>
                 <div className="container">
                     <div className="order-view">
-                        <h1 className="text-center">All - Customers</h1>
+                        <h1 className="all-customer text-center">All - Customers</h1>
                         <div className="main">
                             <table>
                                 <thead>
@@ -65,7 +65,7 @@ const Customer = () => {
                                             <td>{customer.email}</td>
                                             <td>{customer.role}</td>
                                             <td>
-                                                <button className="view" onClick={() => onHandleDelete(customer._id)}><MdDelete /></button>
+                                                <button className="delete-customer" onClick={() => onHandleDelete(customer._id)}><MdDelete /></button>
                                             </td>
                                         </tr>
                                     ))}

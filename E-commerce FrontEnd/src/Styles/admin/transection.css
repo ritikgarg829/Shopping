@@ -54,7 +54,7 @@ hw {
 
 
 
-.adminContainer {
+.adminContainer-transection {
     display: grid;
     grid-template-columns: 1fr 4fr;
     gap: 2rem;
@@ -67,11 +67,11 @@ hw {
     margin: auto;
 }
 
-h1 {
+.all-transection {
     font-size: xxx-large;
     font-weight: 700;
-    margin: 1rem 0rem;
-    text-align: left;
+    margin: 4rem 4rem;
+    text-align: center;
 }
 
 .order-view {

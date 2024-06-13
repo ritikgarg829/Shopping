@@ -91,6 +91,19 @@ aside>a {
 
 }
 
+h1 {
+    margin-top: 1rem;
+    background-color: rgb(118, 115, 115);
+    padding: 1rem;
+    text-decoration: none;
+    color: white;
+    display: flex;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    border-radius: 5px;
+    justify-content: center;
+}
+
 
 
 

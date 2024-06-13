@@ -116,12 +116,12 @@ const TransactionManagement = () => {
                     ))}
                 </section>
 
-                <button className="product-delete-btn" onClick={deleteHandler}>
+                <button className="transection-delete-btn" onClick={deleteHandler}>
                     <FaTrash />
                 </button>
 
                 <article className="shipping-info-card">
-                    <h1 className="text-center">Order Info</h1>
+                    <h1 className="text-lg font-medium text-center">Order Info</h1>
                     <h5>User Info</h5>
                     <p>Name: {name}</p>
                     <p>

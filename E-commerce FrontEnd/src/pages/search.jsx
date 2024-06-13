@@ -21,24 +21,25 @@ const Search = () => {
 
     if (isError) Toast.error(isError.data.message);
     if (searchError) Toast.error(searchError.data.message);
-
     const AddtoCartHandler = (cartItems) => {
         if (cartItems.stock < 1) return Toast.error("out of stock");
         dispatch(addTocart(cartItems));
         Toast.success("Added In a Cart")
     };
 
+    // Determine if prev/next buttons should be disabled
     const isPrevPage = page > 1;
-    const isNextPage = page < 4;
+    const isNextPage = searchData && page < searchData.totalpage;
 
     const handleCategoryChange = (e) => {
         setCategory(e.target.value);
+        setPage(1); // Reset page number when category changes
     };
 
     return (
         <div className="product-serach">
             <aside>
-                <h1>Filter</h1>
+                <h1 className="filter">Filter</h1>
                 <div>
                     <h3>Sort</h3>
                     <select value={sort} onChange={(e) => setSort(e.target.value)}>
@@ -65,7 +66,7 @@ const Search = () => {
             </aside>
 
             <main>
-                <h1>Products</h1>
+                <h1 className="filter">Products</h1>
                 <input className="searchbar" type="text" placeholder=' Search By Name..' value={search} onChange={(e) => setSearch(e.target.value)} />
                 <div className="search-product-list">
                     {/* ProductCard components */}
@@ -81,14 +82,25 @@ const Search = () => {
                         />
                     ))}
                 </div>
-                {
-                    searchData && searchData.totalpage > 1 && (
-                        <article>
-                            <button className="pages" disabled={!isPrevPage} onClick={() => setPage((prev) => prev - 1)}>Prev</button>
-                            <span>{page} of {searchData.totalpage} </span>
-                            <button className="pages" disabled={!isNextPage} onClick={() => setPage((prev) => prev + 1)}>Next</button>
-                        </article>
-                    )}
+                {searchData && searchData.totalpage > 1 && (
+                    <article>
+                        <button
+                            className="pages"
+                            disabled={!isPrevPage}
+                            onClick={() => setPage((prev) => prev - 1)}
+                        >
+                            Prev
+                        </button>
+                        <span>{page} of {searchData.totalpage} </span>
+                        <button
+                            className="pages"
+                            disabled={!isNextPage}
+                            onClick={() => setPage((prev) => prev + 1)}
+                        >
+                            Next
+                        </button>
+                    </article>
+                )}
             </main>
         </div>
     );

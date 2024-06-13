@@ -15,9 +15,9 @@ const toss = () => {
     };
 
     return (
-        <div className="adminContainer">
+        <div className="adminContainer-toss">
             <AdminSidebar />
-            <main className="dashboard-app-container">
+            <main className="toss-app-container">
                 <h1 className="font-bold text-3xl">Toss</h1>
                 <section>
                     <article

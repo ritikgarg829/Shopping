@@ -115,13 +115,13 @@ const productManagement = () => {
                 <section>
                     <strong>ID - {params.id}</strong>
                     <img className="big-img" src={`${server}/${photo}`} alt="Product" />
-                    <p>{name}</p>
+                    <p className="font-medium">{name}</p>
                     {stock > 0 ? (
-                        <span className="stock-span text-green-600">{stock} Available</span>
+                        <span className="stock-span text-green-600 ">{stock} Available</span>
                     ) : (
                         <span className="stock-span text-red-600">Not Available</span>
                     )}
-                    <h3>${price}</h3>
+                    <h3 className="font-medium">₹{price}</h3>
                 </section>
 
                 <button className="product-delete-btn" onClick={deleteHandler}>
@@ -139,17 +139,6 @@ const productManagement = () => {
                                 placeholder="Name"
                                 value={nameUpdate}
                                 onChange={(e) => setNameUpdate(e.target.value)}
-                            />
-                        </div>
-
-                        <div>
-                            <label>category</label>
-                            <input
-
-                                type="text"
-                                placeholder="category"
-                                value={categoryUpdate}
-                                onChange={(e) => setcategoryUpdate(String(e.target.value))}
                             />
                         </div>
 
@@ -174,14 +163,23 @@ const productManagement = () => {
                             />
                         </div>
 
+                        <div>
+                            <label>category</label>
+                            <input
 
+                                type="text"
+                                placeholder="category"
+                                value={categoryUpdate}
+                                onChange={(e) => setcategoryUpdate(String(e.target.value))}
+                            />
+                        </div>
 
                         <div>
                             <label>Photo</label>
                             <input type="file" onChange={changeImageHandler} />
                         </div>
 
-                        {photoUpdate && <img className="small-img" src={photoUpdate} alt="New Image" />}
+                        {photoUpdate && <img className="small-img" src={`${server}/${photoUpdate}`} alt="New Image" />}
 
                         <button className="create" type="submit">Update</button>
                     </form>

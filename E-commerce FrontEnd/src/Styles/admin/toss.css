@@ -54,19 +54,19 @@ hw {
 
 
 
-.adminContainer {
+.adminContainer-toss {
     display: grid;
     grid-template-columns: 1fr 4fr;
     gap: 2rem;
     height: 100vh;
 }
 
-.dashboard-app-container {
+.toss-app-container {
     background-color: white;
     padding: 4rem;
 }
 
-.dashboard-app-container>section {
+.toss-app-container>section {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -111,18 +111,18 @@ hw {
         overflow: auto;
     }
 
-    .dashboard .widget-container,
-    .dashboard .graph-container,
-    .dashboard .transaction-container {
+    .toss .widget-container,
+    .toss .graph-container,
+    .toss .transaction-container {
         justify-content: center;
         flex-wrap: wrap;
     }
 
-    .dashboard .graph-container {
+    .toss .graph-container {
         padding: 2rem;
     }
 
-    .dashboard .transaction-container {
+    .toss .transaction-container {
         padding: 2rem;
         height: unset;
     }
@@ -162,13 +162,13 @@ hw {
         margin: 8rem auto;
     }
 
-    .dashboard-app-container>section .coupon-form,
-    .dashboard-app-container>section .stopwatch {
+    .toss-app-container>section .coupon-form,
+    .toss-app-container>section .stopwatch {
         display: flex;
         flex-direction: column;
     }
 
-    .dashboard-app-container>section .stopwatch {
+    .toss-app-container>section .stopwatch {
         align-items: center;
     }
 }

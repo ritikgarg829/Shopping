@@ -72,7 +72,7 @@ const Shipping = () => {
         <div className="shipping">
             <button className="back-btn" onClick={() => navigate("/cart")}><BiArrowBack /></button>
             <form onSubmit={submitHandler}>
-                <h1>Shipping Address</h1>
+                <h2 className="shipping-heading">Shipping Address</h2>
                 <input type="text" placeholder='Address' name="address" required
                     value={shippingInfo.address}
                     onChange={changeHandler} />

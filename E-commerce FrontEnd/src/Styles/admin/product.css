@@ -81,13 +81,13 @@ hw {
     /* Add padding for spacing */
 }
 
-.New-Product a:hover {
-    color: rgb(149, 149, 217);
-    /* Change link color on hover */
+.create-product-link {
+    color: grey;
+    width: 100%
 }
 
 
-.adminContainer {
+.adminContainer-product {
     display: grid;
     grid-template-columns: 1fr 4fr;
     gap: 2rem;
@@ -95,7 +95,7 @@ hw {
 }
 
 
-.container {
+.container-product {
     max-width: 1367px;
     width: 100%;
     margin: auto;
@@ -112,29 +112,29 @@ h1 {
     margin: 20px;
 }
 
-.main {
+.main-data {
     max-height: 300px;
     overflow: auto;
 
 }
 
 /* Scrollbar Styles */
-.main::-webkit-scrollbar {
+.main-data::-webkit-scrollbar {
     width: 10px;
     /* Width of the scrollbar */
 }
 
-.main::-webkit-scrollbar-track {
+.main-data::-webkit-scrollbar-track {
     background: #f1f1f1;
     /* Color of the track */
 }
 
-.main::-webkit-scrollbar-thumb {
+.main-data::-webkit-scrollbar-thumb {
     background: #888;
     /* Color of the scrollbar handle */
 }
 
-.main::-webkit-scrollbar-thumb:hover {
+.main-data::-webkit-scrollbar-thumb:hover {
     background: #555;
     /* Color of the scrollbar handle on hover */
 }

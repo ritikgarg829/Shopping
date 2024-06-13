@@ -38,11 +38,11 @@ const stopwatch = () => {
     }, [isRunning]);
 
     return (
-        <div className="adminContainer">
+        <div className="adminContainer-stopwatch">
             <AdminSidebar />
-            <main className="dashboard-app-container">
-                <h1 className="font-bold text-3xl">Stopwatch</h1>
-                <section>
+            <main className="stopwatch-app-container">
+                <h1 className="stopwatch font-bold text-3xl">Stopwatch</h1>
+                <section className="stopwatch-section">
                     <div className="stopwatch">
                         <h2>{formatTime(time)}</h2>
                         <button onClick={() => setIsRunning((prev) => !prev)}>

@@ -28,12 +28,12 @@ const transection = () => {
     }
 
     return (
-        <div className="adminContainer">
+        <div className="adminContainer-transection">
             <AdminSidebar />
             <main>
                 <div className="container">
                     <div className="order-view">
-                        <h1 className="text-center">All - transections</h1>
+                        <h1 className="all-transection text-center">All - transections</h1>
                         <div className="main">
                             <table>
                                 <thead>

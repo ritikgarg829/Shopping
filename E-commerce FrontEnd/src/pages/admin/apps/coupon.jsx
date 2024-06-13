@@ -1,118 +1,108 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react';
+import { Link } from "react-router-dom";
+import AdminSidebar from '../../../components/admin/adminSidebar.jsx';
 import "../../../Styles/admin/coupon.css";
-import AdminSidebar from "../../../components/admin/adminSidebar"
-import { FormEvent, useEffect, useState } from "react";
-const allLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-const allNumbers = "1234567890";
-const allSymbols = "!@#$%^&*()_+";
-
+import { FaPlus } from "react-icons/fa";
+import { MdDelete } from "react-icons/md";
+import toast from 'react-hot-toast';
+import { useSelector } from 'react-redux';
+import { useAllCouponQuery, useDeleteCouponMutation } from "../../../redux/api/coupon-api.js"
 
 
 const coupon = () => {
-    const [size, setSize] = useState(8);
-    const [prefix, setPrefix] = useState("");
-    const [includeNumbers, setIncludeNumbers] = useState(false);
-    const [includeCharacters, setIncludeCharacters] = useState(false);
-    const [includeSymbols, setIncludeSymbols] = useState(false);
-    const [isCopied, setIsCopied] = useState(false);
 
-    const [coupon, setCoupon] = useState("");
+    const { user } = useSelector(state => state.userReducer);
 
-    const copyText = async (coupon) => {
-        await window.navigator.clipboard.writeText(coupon);
-        setIsCopied(true);
-    };
+    const { data, isLoading, isError } = useAllCouponQuery(user?._id);
+    const [deleteuser] = useDeleteCouponMutation(user?._id);
 
-    const submitHandler = (e) => {
-        e.preventDefault();
+    if (isError) Toast.error(isError.data.message);
 
-        if (!includeNumbers && !includeCharacters && !includeSymbols)
-            return alert("Please Select One At Least");
+    const [couponData, setCouponData] = useState([]);
 
-        let result = prefix || "";
-        const loopLength = size - result.length;
-
-        for (let i = 0; i < loopLength; i++) {
-            let entireString = "";
-            if (includeCharacters) entireString += allLetters;
-            if (includeNumbers) entireString += allNumbers;
-            if (includeSymbols) entireString += allSymbols;
-
-            const randomNum = ~~(Math.random() * entireString.length);
-            result += entireString[randomNum];
-        }
-
-        setCoupon(result);
-    };
+    console.log("data is", data)
 
     useEffect(() => {
-        setIsCopied(false);
-    }, [coupon]);
+        if (data) {
+            setCouponData(data.discount);
+            console.log("my data is", couponData)
+        }
+    }, [data]);
+
+    if (isError) {
+        toast.error(isError.data.message);
+    }
+
+
+
+    const deletehandler = async (id) => {
+
+        const res = await deleteuser({ userid: user?._id, couponid: id })
+        if ("data" in res) {
+            toast.success("coupon deleted successfully");
+            setCouponData(prev => prev.filter(coupon => coupon._id !== id));
+        } else {
+            const error = res.error;
+            const message = error.data.message;
+            toast.error(message);
+        }
+
+
+    }
 
     return (
-        <div className="adminContainer">
-            <AdminSidebar />
-            <main className="dashboard-app-container">
-                <h1 className="font-bold text-3xl">Coupon</h1>
-                <section>
-                    <form className="coupon-form" onSubmit={submitHandler}>
-                        <input
-                            type="text"
-                            placeholder="Text to include"
-                            value={prefix}
-                            onChange={(e) => setPrefix(e.target.value)}
-                            maxLength={size}
-                        />
+        <>
+            <div className="adminContainer-coupon">
+                <AdminSidebar />
+                <main>
+                    <div className="New-Product">
+                        <Link to="/admin/create-coupon" className="create-product-link">
+                            Create new Coupon &nbsp;<FaPlus />
+                        </Link>
+                    </div>
+                    <div className="container">
+                        <div className="order-view">
+                            <h1 className="all-coupon text-center">All - Coupons</h1>
+                            <div className="main">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Id</th>
+                                            <th>Coupon</th>
+                                            <th>Amount</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
 
-                        <input
-                            type="number"
-                            placeholder="Coupon Length"
-                            value={size}
-                            onChange={(e) => setSize(Number(e.target.value))}
-                            min={8}
-                            max={25}
-                        />
-
-                        <fieldset>
-                            <legend>Include</legend>
-
-                            <input
-                                type="checkbox"
-                                checked={includeNumbers}
-                                onChange={() => setIncludeNumbers((prev) => !prev)}
-                            />
-                            <span>Numbers</span>
-
-                            <input
-                                type="checkbox"
-                                checked={includeCharacters}
-                                onChange={() => setIncludeCharacters((prev) => !prev)}
-                            />
-                            <span>Characters</span>
-
-                            <input
-                                type="checkbox"
-                                checked={includeSymbols}
-                                onChange={() => setIncludeSymbols((prev) => !prev)}
-                            />
-                            <span>Symbols</span>
-                        </fieldset>
-                        <button className="generate" type="submit">Generate</button>
-                    </form>
-
-                    {coupon && (
-                        <code>
-                            {coupon}{" "}
-                            <span className="coupon-span" onClick={() => copyText(coupon)}>
-                                {isCopied ? "Copied" : "Copy"}
-                            </span>{" "}
-                        </code>
-                    )}
-                </section>
-            </main>
-        </div>
-    );
-};
+                                        {couponData.length > 0 ? (
+                                            couponData.map(coupon => (
+                                                <tr key={coupon._id}>
+                                                    <td>{coupon._id}</td>
+                                                    <td>{coupon.coupon}</td>
+                                                    <td>₹{coupon.amount}</td>
+                                                    <td>
+                                                        <button className="coupon-delete-btn" onClick={() => deletehandler(coupon._id)}><MdDelete /></button>
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        ) : (
+                                            <tr>
+                                                <td colSpan="5">No products found</td>
+                                            </tr>
+                                        )}
 
 
-export default coupon
+                                    </tbody>
+
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </main >
+            </div >
+        </>
+    )
+}
+
+export default coupon;

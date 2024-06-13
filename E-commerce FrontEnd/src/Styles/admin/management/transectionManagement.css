@@ -152,6 +152,15 @@ input {
     cursor: pointer;
 }
 
+.transection-delete-btn {
+    position: absolute;
+    left: 43rem;
+}
+
+.transection-delete-btn:hover {
+    color: red;
+}
+
 @media screen and (max-width: 1200px) {
     .admin-container {
         overflow: auto;

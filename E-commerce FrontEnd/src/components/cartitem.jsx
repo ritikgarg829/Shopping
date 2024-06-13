@@ -14,7 +14,7 @@ const cartitem = ({ cartitems, incrementHandler, decrementhandler, removeHandler
                 <span>Price: ₹{price}</span>
                 <div className="item-btn">
                     <button onClick={() => decrementhandler(cartitems)} className="plusminus">-</button>
-                    {quantity}
+                    <p className="quant">{quantity}</p>
                     <button onClick={() => incrementHandler(cartitems)} className="plusminus">+</button>
                     <button onClick={() => removeHandler(productid)} className="trash"><FaTrash /></button>
                 </div>

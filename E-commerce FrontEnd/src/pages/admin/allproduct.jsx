@@ -37,18 +37,18 @@ const AllProduct = () => {
 
     return (
         <>
-            <div className="adminContainer">
+            <div className="adminContainer-product">
                 <AdminSidebar />
-                <main>
+                <main className="main-product">
                     <div className="New-Product">
                         <Link to="/admin/newproduct" className="create-product-link">
                             Create new Product &nbsp;<FaPlus />
                         </Link>
                     </div>
-                    <div className="container">
+                    <div className="container-product">
                         <div className="order-view">
                             <h1 className="text-center">All - Products</h1>
-                            <div className="main">
+                            <div className="main-data">
                                 <table>
                                     <thead>
                                         <tr>
@@ -64,7 +64,7 @@ const AllProduct = () => {
                                         {productData.length > 0 ? (
                                             productData.map(product => (
                                                 <tr key={product._id}>
-                                                    <td><img className="w-12 h-15" src={`${server}/${product.photo}`} /></td>
+                                                    <td><img className="w-12 h-12" src={`${server}/${product.photo}`} /></td>
                                                     <td>{product.name}</td>
                                                     <td>₹{product.price}</td>
                                                     <td>{product.stock}</td>
