@@ -50,8 +50,7 @@ const App = () => {
   const location = useLocation();
 
   const hideFooterPaths = [
-    '/admin/dashboard',
-    ''
+    '/admin/dashboard'
   ];
 
   const hideFooterRegex = [
